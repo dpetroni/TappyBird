@@ -29,7 +29,7 @@ public class Bird {
     public Bird(Context context) {
 
         // get the image
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.swan);
+        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.jack);
 
         // scale the size
         width = bitmap.getWidth() * SCALE;
@@ -60,6 +60,7 @@ public class Bird {
                 null);
     }
 
+
 //    public void doUpdate(double elapsed, float touchX ,float touchY) {
 //        // easing based on touch point
 //        x = (float) (x + ((touchX - x) * elapsed *2));
@@ -72,6 +73,7 @@ public void doUpdate(double elapsed) {
     // Is the cloud off the screen?
     if (x - width/2 > screenWidth) {
         // make it look like a new cloud appears
+
         x = -width/2;
         y = (float) (Math.random() * screenHeight);
         speed = (float) (Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED);

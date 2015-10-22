@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.SensorEventListener;
@@ -27,6 +28,7 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
     private Context context;
     private Bitmap bitmap;
     private int screenWidth,screenHeight;
+
 
     // Touch location for the gun shot
     private float touchX, touchY;
@@ -226,6 +228,18 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
             for (Bird bird : birds) {
                 bird.doDraw(canvas);
             }
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setStyle(Paint.Style.FILL);
+
+
+            paint.setColor(Color.RED);
+            paint.setTextSize(50);
+
+            canvas.drawText("LIVES REMAINING: ", 10, 50, paint);
+            paint.setColor(Color.YELLOW);
+            canvas.drawText("3", 450, 50, paint);
+
 
 
             //bird.doDraw(canvas);

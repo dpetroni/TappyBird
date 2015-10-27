@@ -27,7 +27,7 @@ public class Cloud {
     public Cloud(Context context) {
 
         // get the image
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.jen);
+        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.cloud);
 
         // scale the size
         width = bitmap.getWidth() * SCALE;

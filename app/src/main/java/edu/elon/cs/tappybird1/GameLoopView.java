@@ -118,7 +118,7 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
         // the bird sprite
         //private Bird bird;
         private ArrayList<Bird> birds;
-        private final int NUM_BIRDS = 5;
+        private final int NUM_BIRDS = 7;
 
         // the clouds
         private final int NUM_CLOUDS = 3;
@@ -198,10 +198,8 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
                 cloud.doUpdate(elapsed);
             }
             for (Bird bird : birds) {
-                bird.doUpdate(elapsed);
+                bird.doUpdate(elapsed, touchX, touchY);
             }
-
-            //bird.doUpdate(elapsed);
 
         }
 
@@ -228,17 +226,7 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
             for (Bird bird : birds) {
                 bird.doDraw(canvas);
             }
-            Paint paint = new Paint();
-            paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.FILL);
 
-
-            paint.setColor(Color.RED);
-            paint.setTextSize(50);
-
-            canvas.drawText("LIVES REMAINING: ", 10, 50, paint);
-            paint.setColor(Color.YELLOW);
-            canvas.drawText("3", 450, 50, paint);
 
 
 

@@ -1,14 +1,13 @@
 package edu.elon.cs.tappybird1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.hardware.SensorEventListener;
+import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -28,6 +27,12 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
     private Context context;
     private Bitmap bitmap;
     private int screenWidth,screenHeight;
+    private double birdTime;
+    protected MediaPlayer mp1;
+    protected MediaPlayer mp2;
+    protected MediaPlayer mp3;
+    protected MediaPlayer mp4;
+    private int count = 1;
 
 
     // Touch location for the gun shot
@@ -62,9 +67,19 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
 
         // Game loop thread
         thread = new GameLoopThread();
+
+        mp1 = MediaPlayer.create(context, R.raw.shot);
+        mp2 = MediaPlayer.create(context, R.raw.shot);
+        mp3 = MediaPlayer.create(context, R.raw.shot);
+        mp4 = MediaPlayer.create(context, R.raw.shot);
     }
 
 
+    public void startEndScreen(){
+
+        Intent intent = new Intent(context, EndScreenActivity.class);
+        context.startActivity(intent);
+    }
 
     // SurfaceHolder.Callback methods:
     @Override
@@ -103,11 +118,35 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // remember the last touch point
-        touchX = event.getX();
-        touchY = event.getY();
+        if(MotionEvent.ACTION_DOWN == event.getAction()) {
+            touchX = event.getX();
+            touchY = event.getY();
 
+            if(count == 1){
+                mp1.start();
+                count++;
+            }
+            if(count == 2){
+                mp2.start();
+                count++;
+            }
+            if(count == 3){
+                mp3.start();
+                count++;
+            }
+            if(count == 4){
+                mp4.start();
+                count = 1;
+            }
+        }
+        if(MotionEvent.ACTION_MOVE == event.getAction()){
+            touchX = -10;
+            touchY = -10;
+
+        }
         return true;
     }
+
 
     // Game Loop Thread
     private class GameLoopThread extends Thread {
@@ -118,7 +157,8 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
         // the bird sprite
         //private Bird bird;
         private ArrayList<Bird> birds;
-        private final int NUM_BIRDS = 7;
+        private int NUM_BIRDS = 2;
+
 
         // the clouds
         private final int NUM_CLOUDS = 3;
@@ -170,6 +210,7 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
                     // compute how much time since last time around
                     long now = System.currentTimeMillis();
                     double elapsed = (now - lastTime) / 1000.0;
+                    birdTime = elapsed;
                     lastTime = now;
 
                     // update/draw
@@ -194,10 +235,21 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
 
         // move all objects in the game
         private void doUpdate(double elapsed) {
+
+            if(birdTime%3 == 0){
+                NUM_BIRDS++;
+            }
+
+            if(Bird.livesRemaining == 0){
+
+                startEndScreen();
+                return;
+            }
             for (Cloud cloud : clouds) {
                 cloud.doUpdate(elapsed);
             }
             for (Bird bird : birds) {
+
                 bird.doUpdate(elapsed, touchX, touchY);
             }
 
@@ -205,6 +257,7 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
 
         // draw all objects in the game
         private void doDraw(Canvas canvas) {
+
 
 
 
@@ -225,6 +278,7 @@ public class GameLoopView extends SurfaceView implements SurfaceHolder.Callback{
             }
             for (Bird bird : birds) {
                 bird.doDraw(canvas);
+
             }
 
 

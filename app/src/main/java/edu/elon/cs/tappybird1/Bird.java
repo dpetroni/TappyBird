@@ -1,5 +1,6 @@
 package edu.elon.cs.tappybird1;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,19 +9,28 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Vibrator;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
 /**
  * Created by DavidPetroni on 10/21/15.
  */
-public class Bird {
+
+public class Bird extends Activity{
     private  float speed;
     protected float x, y;
     private float width, height;
-    private Bitmap bitmap;
-    private static int livesRemaining = 3;
+    private Bitmap birdBitmap;
+    private Bitmap bloodBitmap;
+    protected static int livesRemaining = 3;
     private static int score = 0;
+    public boolean showBlood = false;
+    private Context context;
+    protected static double bloodLength = .3;
+
+    private double bloodTime = 0.0;
 
 
     //private final float SCALE = 1.0f;
@@ -33,12 +43,14 @@ public class Bird {
 
     public Bird(Context context) {
 
-        // get the image
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.swan);
+        this.context = context;
 
+        // get the image
+        birdBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.swan);
+        bloodBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.blood);
         // scale the size
-        width = bitmap.getWidth() * SCALE;
-        height = bitmap.getHeight() * SCALE;
+        width = birdBitmap.getWidth() * SCALE;
+        height = birdBitmap.getHeight() * SCALE;
 
         // figure out the screen width
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -58,11 +70,21 @@ public class Bird {
 
     public void doDraw(Canvas canvas) {
         // draw the bird
-        canvas.drawBitmap(bitmap,
-                null,
-                new Rect((int) (x - width/2), (int) (y- height/2),
-                        (int) (x + width/2), (int) (y + height/2)),
-                null);
+        if(showBlood == false) {
+            canvas.drawBitmap(birdBitmap,
+                    null,
+                    new Rect((int) (x - width / 2), (int) (y - height / 2),
+                            (int) (x + width / 2), (int) (y + height / 2)),
+                    null);
+        }
+        else{
+            canvas.drawBitmap(bloodBitmap,
+                    null,
+                    new Rect((int) (x - width / 2), (int) (y - height / 2),
+                            (int) (x + width / 2), (int) (y + height / 2)),
+                    null);
+
+        }
 
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
@@ -90,22 +112,37 @@ public class Bird {
 //        y = (float) (y + ((touchY - y) * elapsed * 2));
 //    }
 public void doUpdate(double elapsed, float touchX, float touchY) {
-    // easing based on touch point
-    x = (x + speed);
 
-    // Is the bird off the screen?
-    if (x - width/2 > screenWidth) {
-        livesRemaining--;
-        // make it look like a new bird appears
+    if (showBlood) {
+        bloodTime += elapsed;
+        if(bloodTime > bloodLength) {
+            x = -width / 2;
+            y = (float) (Math.random() * screenHeight);
+            speed = (float) (Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED);
+            showBlood = false;
+            bloodTime = 0.0;
+        }
+    } else {
 
-        x = -width/2;
+        // easing based on touch point
+        x = (x + speed);
+        // Is the bird off the screen?
+        if (x - width / 2 > screenWidth) {
+            livesRemaining--;
+            // make it look like a new bird appears
 
-        y = (float) (Math.random() * screenHeight);
-        speed = (float) (Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED);
+            x = -width / 2;
+
+            y = (float) (Math.random() * screenHeight);
+            speed = (float) (Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED);
+        }
+
     }
     if(livesRemaining == 0){
-        System.exit(0);
+
     }
+
+
 
 
     if (       touchX > (x-width/2)
@@ -113,14 +150,18 @@ public void doUpdate(double elapsed, float touchX, float touchY) {
             && touchY > (y-(height/2))
             && touchY < (y+height/2) ){
 
+        Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        vib.vibrate(100);
+
+
+
         score++;
 
 
-
-        x = -width/2;
-        y = (float) (Math.random() * screenHeight);
-        speed = (float) (Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED);
+        showBlood = true;
 
     }
+
+
 }
 }

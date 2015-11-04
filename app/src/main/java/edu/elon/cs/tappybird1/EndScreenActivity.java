@@ -15,8 +15,4 @@ public class EndScreenActivity extends Activity {
         setContentView(R.layout.activity_end_screen);
     }
 
-    public void onClickRestart(View view){
-        Intent intent = new Intent(this, SkyActivity.class);
-        startActivity(intent);
-    }
 }

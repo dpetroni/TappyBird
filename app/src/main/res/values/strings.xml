@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TappyBird1</string>
 
-    <string name="start">Start</string>
+    <string name="start">Click to begin</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_start_screen">TAPPY BIRD</string>
     <string name="title_activity_end_screen">EndScreenActivity</string>
